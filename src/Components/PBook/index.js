@@ -2,27 +2,40 @@ import { Component } from "react";
 
 import ContactMaker from "../ContactMaker";
 
+import "./index.css";
+
+import { v4 } from "uuid";
+
 var initialContacts = [
-  { name: "chsk", num: 123333, isFav: false },
-  { name: "chsk2", num: 1212121, isFav: true },
+  { id: 1, name: "chsk", num: 123333, isFav: false },
+  { id: 2, name: "chsk2", num: 1212121, isFav: true },
 ];
 
 class PBook extends Component {
   state = { name: "", num: "", contacts: initialContacts };
 
   changeMe = (name) => {
-    var { contacts } = this.state;
-    const details = contacts.filter((e) => e.name === name)[0];
-    details.isFav = details.isFav ? false : true;
-    contacts = contacts.filter((e) => e.name !== name);
-    contacts.push(details);
-    this.setState({ contacts });
+    this.setState((p) => ({
+      contacts: p.contacts.map((e) => {
+        if (e.name === name) {
+          return { ...e, isFav: !e.isFav };
+        } else {
+          return e;
+        }
+      }),
+    }));
+    // var { contacts } = this.state;
+    // const details = contacts.filter((e) => e.name === name)[0];
+    // details.isFav = details.isFav ? false : true;
+    // contacts = contacts.filter((e) => e.name !== name);
+    // contacts.push(details);
+    // this.setState({ contacts });
     // console.log(details);
   };
 
   addContact = () => {
     const { name, num, contacts } = this.state;
-    contacts.push({ name, num });
+    contacts.push({ id: v4(), name, num });
     this.setState({ name: "", num: "", contacts: contacts });
   };
   updateName = (event) => {
@@ -34,17 +47,44 @@ class PBook extends Component {
 
   render() {
     const { contacts, name, num } = this.state;
+    console.log(contacts);
     return (
       <>
         <div className="input-holder">
-          <input value={name} onChange={this.updateName} type="text" />
-          <input value={num} onChange={this.updateNum} type="number" />
-          <button onClick={this.addContact}>Add Contact</button>
+          <div>
+            <label htmlFor="name">Name: </label>
+            <input
+              id="name"
+              value={name}
+              onChange={this.updateName}
+              type="text"
+            />
+          </div>
+          <div>
+            <label htmlFor="number">Number:</label>
+            <input
+              id="number"
+              value={num}
+              onChange={this.updateNum}
+              type="number"
+            />
+          </div>
+          <div>
+            <button onClick={this.addContact}>Add Contact</button>
+          </div>
         </div>
         <table>
           <tbody>
+            <tr>
+              <th>Name</th>
+              <th>Contact Number</th>
+            </tr>
             {contacts.map((contact) => (
-              <ContactMaker contact={contact} changeMe={this.changeMe} />
+              <ContactMaker
+                key={contact.id}
+                contact={contact}
+                changeMe={this.changeMe}
+              />
             ))}
           </tbody>
         </table>

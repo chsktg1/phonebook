@@ -2,6 +2,8 @@ import { Component } from "react";
 
 import { Star, StarFill } from "react-bootstrap-icons";
 
+import "./index.css";
+
 class ContactMaker extends Component {
   change = () => {
     const { changeMe, contact } = this.props;
